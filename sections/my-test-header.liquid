@@ -1,0 +1,131 @@
+{{ 'my-test.css' | asset_url | stylesheet_tag }}
+
+{% schema %}
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "header_logo_image",
+        "label": "Logo Image"
+      }, {
+        "type": "text",
+        "id": "header_tagline",
+        "label": "Tagline",
+        "default": "Find the ideal gift for your loved ones."
+      }, {
+        "type": "text",
+        "id": "header_button_text",
+        "label": "Button Text",
+        "default": "Choose Gift"
+      }
+    ],
+    "presets": [
+      {
+        "name": "My Test Header",
+        "category": "Header"
+      }
+    ]
+  }
+{% endschema %}
+
+<section class="header-section">
+  <div class="bg-gray">
+    <div class="container fixed">
+      <div class="top-bar">
+        <!-- Hamburger menu -->
+        <div class="hamburger">
+          <button aria-label="Toggle Navigation">
+            <input
+              type="checkbox"
+              id="checkbox"
+              readonly />
+            <label for="checkbox" class="toggle">
+              <div class="bars" id="bar1"></div>
+              <div class="bars" id="bar2"></div>
+              <div class="bars" id="bar3"></div>
+            </label>
+          </button>
+        </div>
+
+        <!-- Dynamic Logo Image -->
+        <div class="logo-top-bar">
+          {% if section.settings.header_logo_image %}
+            <img src="{{ section.settings.header_logo_image | image_url }}" alt="Store Logo" />
+          {% else %}
+            <img src="{{ 'default-logo.png' | asset_url }}" alt="Default Logo" />
+          {% endif %}
+        </div>
+
+        <!-- Dynamic Tagline -->
+        <div class="logo-top-bar-text">
+          <p>{{ section.settings.header_tagline }}</p>
+        </div>
+
+        <!-- Dynamic Button with Icon -->
+        <div class="logo-top-bar-btn">
+          <button class="btn" aria-label="{{ section.settings.header_button_text }}">
+            <span class="btn-text">{{ section.settings.header_button_text }}</span>
+            <span class="btn-icon">
+              <svg
+                width="26"
+                height="12"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="black">
+                <path d="M1.22205 4.80469L0.472046 4.80469L0.472046 6.30469L1.22205 6.30469L1.22205 4.80469ZM25.7524 6.08502C26.0453 5.79213 26.0453 5.31725 25.7524 5.02436L20.9794 0.251388C20.6865 -0.0415053 20.2116 -0.0415053 19.9187 0.251388C19.6259 0.544281 19.6259 1.01916 19.9187 1.31205L24.1614 5.55469L19.9187 9.79733C19.6259 10.0902 19.6259 10.5651 19.9187 10.858C20.2116 11.1509 20.6865 11.1509 20.9794 10.858L25.7524 6.08502ZM1.22205 6.30469L25.222 6.30469L25.222 4.80469L1.22205 4.80469L1.22205 6.30469Z" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-paragraph">
+      <p>{{ section.settings.header_tagline }}</p>
+    </div>
+    <div class="mobile-menu-btn">
+      <button class="btn">
+        <span class="btn-text">{{ section.settings.header_button_text }}</span>
+        <span class="btn-icon">
+          <svg
+            width="26"
+            height="12"
+            viewBox="0 0 26 12"
+            fill="black"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.22205 4.80469L0.472046 4.80469L0.472046 6.30469L1.22205 6.30469L1.22205 4.80469ZM25.7524 6.08502C26.0453 5.79213 26.0453 5.31725 25.7524 5.02436L20.9794 0.251388C20.6865 -0.0415053 20.2116 -0.0415053 19.9187 0.251388C19.6259 0.544281 19.6259 1.01916 19.9187 1.31205L24.1614 5.55469L19.9187 9.79733C19.6259 10.0902 19.6259 10.5651 19.9187 10.858C20.2116 11.1509 20.6865 11.1509 20.9794 10.858L25.7524 6.08502ZM1.22205 6.30469L25.222 6.30469L25.222 4.80469L1.22205 4.80469L1.22205 6.30469Z" />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<script>
+      document.addEventListener("DOMContentLoaded", function() {
+         // Get the checkbox and mobile menu elements
+    const checkbox = document.getElementById("checkbox");
+    const mobileMenu = document.querySelector(".mobile-menu");
+    const overlayText = document.querySelector(".overlay-text");
+    
+    // Add an event listener for the change event
+    checkbox.addEventListener("change", function () {
+      if (checkbox.checked) {
+        // If checkbox is checked, show the mobile menu
+        mobileMenu.style.height = "188px";
+        mobileMenu.style.marginTop = "64px";
+        overlayText.style.marginTop = "5px";
+        mobileMenu.style.gap = "16px";
+      } else {
+        // If checkbox is unchecked, hide the mobile menu
+        mobileMenu.style.height = "0px";
+        mobileMenu.style.marginTop = "-100px";
+        overlayText.style.marginTop = "60px";        
+        mobileMenu.style.gap = "0px";
+      }
+    });
+    // Show popup on plus icon click
+      });
+</script>

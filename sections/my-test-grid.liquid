@@ -1,0 +1,191 @@
+{{ 'my-test.css' | asset_url | stylesheet_tag }}
+
+{% schema %}
+  {
+    "name": "Test Grid Section",
+    "tag": "section",
+    "disabled_on": {
+      "groups": ["header", "footer"]
+    },
+    "settings": [
+      {
+        "type": "text",
+        "id": "section_title",
+        "label": "Section Title",
+        "default": "Tisso vision in the wild"
+      }, {
+        "type": "product_list",
+        "id": "products",
+        "label": "Select products",
+        "limit": 6
+      }
+    ],
+    "presets": [
+      {
+        "name": "My Test Grid",
+        "category": "Section"
+      }
+    ]
+  }
+{% endschema %}
+
+<section class="section">
+  <div class="container">
+    <!-- Section Title -->
+    <div class="grid-header">
+      <h2>{{ section.settings.section_title }}</h2>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid">
+      {% for product in section.settings.products %}
+        <div
+          class="product-item"
+          data-product-id="{{ product.id }}"
+          data-product-title="{{ product.title }}"
+          data-product-price="{{ product.price }}"
+          data-product-image="{{ product.featured_image | img_url: 'medium' }}"
+          data-product-url="{{ product.url }}">
+
+          <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" />
+          <span
+            class="plus-icon"
+            role="button"
+            data-action="open-popup">+</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Popup for Product Details -->
+    <div
+      class="popup-wrapper-container"
+      id="product-popup"
+      style="display:none;">
+      <div class="popup-wrapper">
+        <div class="popup-close-icon">
+          <button class="close-btn" onclick="closePopup()">&times;</button>
+        </div>
+        <div class="popup-content">
+          <div class="popup-content-image">
+            <img
+              id="popup-product-image"
+              src=""
+              alt="" />
+          </div>
+          <div class="popup-content-details">
+            <h2 id="popup-product-title"></h2>
+            <h5 id="popup-product-price"></h5>
+            <p id="popup-product-description"></p>
+          </div>
+        </div>
+
+        <!-- Color and Size Selection -->
+        <div class="product-add-cart-choose">
+          <div class="product-color-pallete">
+            <p>Color</p>
+            <div class="colors">
+              <div class="color-option">
+                <span class="product-color-display" style="background-color: Blue"></span>
+                <span role="button" class="product-color-option-btn">Blue</span>
+              </div>
+              <div class="color-option">
+                <span class="product-color-display" style="background-color: Black"></span>
+                <span role="button" class="product-color-option-btn">Black</span>
+              </div>
+            </div>
+          </div>
+          <div class="size-selection">
+            <p>Size</p>
+            <select name="size" id="size-dropdown">
+              <option value="">Choose your size</option>
+              <option value="S">Small</option>
+              <option value="M">Medium</option>
+              <option value="L">Large</option>
+            </select>
+          </div>
+          <div class="product-add-to-cart-btn">
+            <button id="add-to-cart-btn">
+              <span>Add to Cart</span>
+              <span>
+                <svg
+                  width="36"
+                  height="12"
+                  viewBox="0 0 36 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1.4093 5.25L0.659302 5.25L0.659302 6.75L1.4093 6.75L1.4093 5.25ZM35.6391 6.53033C35.932 6.23744 35.932 5.76257 35.6391 5.46967L30.8661 0.696701C30.5733 0.403808 30.0984 0.403808 29.8055 0.696701C29.5126 0.989594 29.5126 1.46447 29.8055 1.75736L34.0481 6L29.8055 10.2426C29.5126 10.5355 29.5126 11.0104 29.8055 11.3033C30.0984 11.5962 30.5732 11.5962 30.8661 11.3033L35.6391 6.53033ZM1.4093 6.75L35.1088 6.75L35.1088 5.25L1.4093 5.25L1.4093 6.75Z" fill="white" />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+   const popupWrapper = document.querySelector(".popup-wrapper-container");
+   const popupContent = document.querySelector(".popup-wrapper");
+   popupWrapper.addEventListener("click", (event) => {
+      if (!popupContent.contains(event.target)) {
+        popupWrapper.style.display = "none"; // Hide the popup
+      }
+    });
+  function formatMoney(cents, format = "${{amount}}") {
+  const value = (cents / 100).toFixed(2);
+  return format.replace("{{amount}}", value);
+  }
+    document.addEventListener("DOMContentLoaded", function() {
+  const productItems = document.querySelectorAll('.product-item');
+  
+  // Loop over each product item
+  productItems.forEach(item => {
+    const plusIcon = item.querySelector('.plus-icon');
+  
+    plusIcon.addEventListener('click', function() {
+      const productId = item.getAttribute('data-product-id');
+      const productTitle = item.getAttribute('data-product-title');
+      const productPrice = item.getAttribute('data-product-price');
+      const productImage = item.getAttribute('data-product-image');
+      const productVariants = JSON.parse(item.getAttribute('data-product-variants'));
+  
+      document.getElementById('popup-product-image').src = productImage;
+      document.getElementById('popup-product-title').innerText = productTitle;
+      document.getElementById('popup-product-price').innerText = formatMoney(productPrice);
+  
+  
+      document.getElementById('product-popup').style.display = 'grid';
+  
+      document.getElementById('add-to-cart-btn').onclick = function() {
+  
+        if (productId) {
+          addToCart(productId);
+        } else {
+          alert('Not a valid product');
+        }
+      };
+    });
+  });
+  });
+  
+  // Close the popup
+  function closePopup() {
+  document.getElementById('product-popup').style.display = 'none';
+  }
+  
+  // Add to cart functionality
+  function addToCart(variantId) {
+  fetch('/cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: variantId, quantity: 1 })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('Added to cart successfully!');
+    closePopup();
+  })
+  .catch(error => console.error('Error adding to cart:', error));
+  }
+</script>
